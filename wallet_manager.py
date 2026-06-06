@@ -5,10 +5,10 @@ def connect_to_external_services():
     """
     
     # 1. A structurally valid (but fake) AWS Master Key
-    AWS_ACCESS_KEY_ID = "AKIA5F3B1G7H9J2K4L6M"
-    AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCY1234567890"
+    AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
     
     # 2. A structurally valid (but fake) Slack Webhook
-    SLACK_ALERTS = "https://hooks.slack.com/services/T12345678/B12345678/a1b2c3d4e5f6g7h8i9j0k1l2"
+    SLACK_ALERTS = os.environ["SLACK_ALERTS"]
     
     return True
