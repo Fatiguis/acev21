@@ -29,6 +29,16 @@ def dispatch_webhook(payload: WebhookPayload):
     # 1. THE SOURCE: target_url comes directly from the API payload (untrusted input)
     url = payload.target_url
     
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise HTTPException(status_code=400, detail="Invalid URL scheme")
+    try:
+        resolved_ip = ipaddress.ip_address(socket.gethostbyname(parsed.hostname))
+    except (socket.gaierror, ValueError, TypeError):
+        raise HTTPException(status_code=400, detail="Invalid host")
+    if resolved_ip.is_private or resolved_ip.is_loopback or resolved_ip.is_link_local or resolved_ip.is_reserved:
+        raise HTTPException(status_code=400, detail="Access to internal addresses is not allowed")
+    
     try:
         # 2. THE SINK: The untrusted input is executed by the requests library.
         # Semgrep's taint analysis will catch this because the path from Source to Sink is unbroken.
