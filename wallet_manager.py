@@ -1,18 +1,14 @@
-def get_cloud_database_connection():
+def connect_to_external_services():
     """
     🚨 REAL-WORLD VULNERABILITY: Hardcoded Secrets
-    Committing live API keys or AWS credentials directly into source code.
-    If this repository is ever made public, or if an employee's laptop is compromised, 
-    the attacker gets instant, unrestricted access to the company's cloud infrastructure.
+    Let's see if Semgrep catches a realistic-looking key that doesn't end in 'EXAMPLE'.
     """
     
-    # Semgrep's p/secrets rule will instantly flag the 'AKIA' pattern 
-    # as a high-severity leaked Amazon Web Services key.
-    AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-    AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    # 1. A structurally valid (but fake) AWS Master Key
+    AWS_ACCESS_KEY_ID = "AKIA5F3B1G7H9J2K4L6M"
+    AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCY1234567890"
     
-    return connect_to_aws(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
-
-def connect_to_aws(key, secret):
-    # Dummy function so the code runs
-    return "Connected!"
+    # 2. A structurally valid (but fake) Slack Webhook
+    SLACK_ALERTS = "https://hooks.slack.com/services/T12345678/B12345678/a1b2c3d4e5f6g7h8i9j0k1l2"
+    
+    return True
