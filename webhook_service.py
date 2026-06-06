@@ -42,7 +42,7 @@ def dispatch_webhook(payload: WebhookPayload):
     try:
         # 2. THE SINK: The untrusted input is executed by the requests library.
         # Semgrep's taint analysis will catch this because the path from Source to Sink is unbroken.
-        response = requests.post(url, json=payload.event_data, timeout=5)
+        response = requests.post("%s://%s" % (parsed.scheme, str(resolved_ip)), json=payload.event_data, timeout=5, headers={"Host": parsed.hostname}, allow_redirects=False)
         
         # Returning the response body makes this a "Full SSRF" (much more dangerous than a Blind SSRF)
         return {
