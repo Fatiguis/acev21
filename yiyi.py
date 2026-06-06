@@ -1,16 +1,22 @@
-import requests
+from flask import Flask, request
+import os
 
-def import_profile_avatar(user_provided_url: str) -> bytes:
+app = Flask(__name__)
+
+@app.route("/network-test")
+def test_network():
     """
-    Fetches a profile avatar from an external web address provided by the user.
-    
-    🚨 VULNERABILITY: Server-Side Request Forgery (SSRF)
-    The server blindly executes an HTTP GET request to any string provided by the user.
-    An attacker can pass an internal cloud metadata URL (like http://169.254.169.254/)
-    or internal network IPs (like http://192.168.1.1/) to extract sensitive credentials
-    or map internal services behind the firewall.
+    🚨 VULNERABILITY: Command Injection
     """
-    # Semgrep's p/python and p/owasp-top-ten rulesets target untrusted inputs passed directly here.
-    response = requests.get(user_provided_url, timeout=5)
+    # 1. THE SOURCE: We are taking input directly from the web URL
+    target_ip = request.args.get("ip")
     
-    return response.content
+    # 2. THE SINK: We are stuffing that web input directly into a server shell command
+    # An attacker could send: ?ip=8.8.8.8; cat /etc/passwd
+    # This would execute the ping, and then print the server's passwords.
+    command = f"ping -c 1 {target_ip}"
+    
+    # Semgrep will 100% catch this because it sees the data flowing from the web to the system.
+    os.system(command)
+    
+    return "Test complete!"
